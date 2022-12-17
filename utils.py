@@ -69,3 +69,49 @@ def getCornerPoints(cont):
     perimeter = cv2.arcLength(cont, True)
     approx = cv2.approxPolyDP(cont, 0.02 * perimeter, True)
     return approx
+
+
+
+def reorder(points):
+    _points = points.reshape((4, 2))
+    newPoint = np.zeros((4, 1, 2), np.int32)
+    add = _points.sum(1)
+    newPoint[0] = _points[np.argmin(add)] #[0, 0]
+    newPoint[3] = _points[np.argmax(add)] # [w, h]
+    diff = np.diff(_points, axis=1)
+    newPoint[1] = _points[np.argmin(diff)] # [w, 0]
+    newPoint[2] = _points[np.argmax(diff)] # [0, h]
+    
+    return newPoint
+
+
+def splitBoxes(img):
+    rows = np.vsplit(img, 5)
+    boxes = []
+    for row in rows:
+        cols = np.hsplit(row, 5)
+        for box in cols: 
+            boxes.append(box)
+    return boxes
+
+
+
+# FIND THE CENTER VALUE OF A GIVEN BLOCK
+def showAnswers(img, index, grading , ans, questions, choices):
+    secW =int(img.shape[1] / questions )
+    secH = int(img.shape[0] / choices)
+
+    for x in range(0, questions):
+        answer = index[x]
+        cX = (answer  *  secW) + secW // 2
+        cY = (x * secH) + secH // 2
+
+        if grading[x] == 1:
+            _color = (0, 255, 0)
+        else:
+            _color = (0, 0, 255)
+            correct_answer = ans[x]
+            cv2.circle(img, ((correct_answer * secW) + secW // 2, (x * secH) + secH // 2), 20, (0, 255, 0), cv2.FILLED)
+
+        cv2.circle(img, (cX, cY), 50, _color, cv2.FILLED)
+    return img  
