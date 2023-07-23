@@ -51,12 +51,12 @@ def rectContours(contours):
     
     for i in contours:
         area = cv2.contourArea(i)
-        print(area)
+        # print(area)
         if area > 50: 
             perimeter = cv2.arcLength(i, True)
-            approx = cv2.approxPolyDP(i, 0.03 * perimeter, True)
+            approx = cv2.approxPolyDP(i, 0.02 * perimeter, True)
             # print("Area ", area, "Corner Points", len(approx))
-            if len(approx) == 5: 
+            if len(approx) == 4: 
                 rectCont.append(i)
     rectCont = sorted(rectCont, key= cv2.contourArea, reverse = True)
 
@@ -65,9 +65,8 @@ def rectContours(contours):
 
 
 def getCornerPoints(cont):
-
     perimeter = cv2.arcLength(cont, True)
-    approx = cv2.approxPolyDP(cont, 0.03 * perimeter, True)
+    approx = cv2.approxPolyDP(cont, 0.02 * perimeter, True)
     return approx
 
 
@@ -87,12 +86,15 @@ def reorder(points):
 
 def splitBoxes(img):
     rows = np.vsplit(img, 5)
+    cv2.imshow("Split", rows[0])
     boxes = []
     for row in rows:
         cols = np.hsplit(row, 5)
         for box in cols: 
             boxes.append(box)
-    return boxes
+            # cv2.imshow("option1", box)
+    # return boxes
+     
 
 
 
